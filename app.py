@@ -1,33 +1,31 @@
 import os
-from telegram.ext import Application, CommandHandler, MessageHandler, filters
+from telegram.ext import Application, CommandHandler, ContextTypes
 from telegram import Update
-from telegram.ext import ContextTypes
 
-# Pobieramy token z Environment Variables
+# Pobieramy token z Environment Variables (Render -> Environment)
 TOKEN = os.getenv("TELEGRAM_TOKEN")
 
-# /start command
+# /start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Cześć, tu Jarvis Shadow 🚀 Jestem gotowy do akcji!")
+    await update.message.reply_text("✅ Bot działa! Witaj w Jarvis Shadow!")
 
-# /help command
+# /help
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Dostępne komendy:\n/start - powitanie\n/help - lista komend")
-
-# Obsługa zwykłych wiadomości
-async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_text = update.message.text
-    await update.message.reply_text(f"Powiedziałeś: {user_text}")
+    await update.message.reply_text("ℹ️ Dostępne komendy:\n/start - uruchom bota\n/help - pomoc")
 
 def main():
+    if not TOKEN:
+        raise ValueError("❌ Brak TELEGRAM_TOKEN w Environment Variables!")
+
+    # Tworzymy aplikację
     app = Application.builder().token(TOKEN).build()
 
-    # Handlery
+    # Handlery (komendy)
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("help", help_command))
-    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
 
-    print("Bot wystartował 🚀")
+    # Uruchomienie
+    print("🚀 Jarvis Shadow Bot wystartował i czeka na komendy...")
     app.run_polling()
 
 if __name__ == "__main__":
